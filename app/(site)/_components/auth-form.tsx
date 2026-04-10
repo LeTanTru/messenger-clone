@@ -4,8 +4,9 @@ import AuthSocialButton from '@/app/(site)/_components/auth-social-button';
 import Button from '@/app/components/button';
 import Input from '@/app/components/input/input';
 import axios from 'axios';
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { FaGithub } from 'react-icons/fa';
@@ -14,8 +15,16 @@ import { FcGoogle } from 'react-icons/fc';
 type Variant = 'LOGIN' | 'REGISTER';
 
 export default function AuthForm() {
+  const session = useSession();
+  const router = useRouter();
   const [variant, setVariant] = useState<Variant>('LOGIN');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.status === 'authenticated') {
+      router.push('/users');
+    }
+  }, [session?.status, router]);
 
   const toggleVariant = () => {
     setVariant((currentVariant) =>
@@ -41,7 +50,10 @@ export default function AuthForm() {
     if (variant === 'REGISTER') {
       axios
         .post('/api/register', data)
-        .then(() => toast.success('Account created successfully!'))
+        .then(() => {
+          toast.success('Account created successfully!');
+          signIn('credentials', data);
+        })
         .catch(() => toast.error('Something went wrong!'))
         .finally(() => setIsLoading(false));
     }
@@ -56,6 +68,7 @@ export default function AuthForm() {
             toast.error('Invalid credentials!');
           } else if (callback?.ok && !callback?.error) {
             toast.success('Signed in!');
+            router.push('/users');
           }
         })
         .finally(() => setIsLoading(false));
@@ -71,6 +84,7 @@ export default function AuthForm() {
           toast.error('Invalid credentials!');
         } else if (callback?.ok && !callback?.error) {
           toast.success('Signed in!');
+          router.push('/users');
         }
       })
       .finally(() => setIsLoading(false));

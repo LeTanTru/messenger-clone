@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import ToasterContext from '@/app/context/toaster-context';
+import AuthContext from '@/app/context/auth-context';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -24,8 +25,10 @@ export default function RootLayout({
       className={`${inter.variable} ${inter.className} h-full antialiased`}
     >
       <body className='h-full flex flex-col'>
-        {children}
-        <ToasterContext />
+        <AuthContext>
+          {children}
+          <ToasterContext />
+        </AuthContext>
       </body>
     </html>
   );
