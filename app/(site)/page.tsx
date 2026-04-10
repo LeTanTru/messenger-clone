@@ -1,3 +1,4 @@
+import AuthForm from '@/app/(site)/_components/auth-form';
 import Image from 'next/image';
 
 export default function HomePage() {
@@ -24,7 +25,7 @@ export default function HomePage() {
           Sign in to your account
         </h2>
       </div>
-      {/* Auth Form */}
+      <AuthForm />
     </div>
   );
 }
