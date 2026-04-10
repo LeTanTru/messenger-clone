@@ -3,8 +3,11 @@
 import AuthSocialButton from '@/app/(site)/_components/auth-social-button';
 import Button from '@/app/components/button';
 import Input from '@/app/components/input/input';
+import axios from 'axios';
+import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { FaGithub } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 
@@ -36,17 +39,41 @@ export default function AuthForm() {
     setIsLoading(true);
 
     if (variant === 'REGISTER') {
-      // TODO: Handle registration logic
+      axios
+        .post('/api/register', data)
+        .then(() => toast.success('Account created successfully!'))
+        .catch(() => toast.error('Something went wrong!'))
+        .finally(() => setIsLoading(false));
     }
 
     if (variant === 'LOGIN') {
-      // TODO: Handle NextAuth sign in logic
+      signIn('credentials', {
+        ...data,
+        redirect: false,
+      })
+        .then((callback) => {
+          if (callback?.error) {
+            toast.error('Invalid credentials!');
+          } else if (callback?.ok && !callback?.error) {
+            toast.success('Signed in!');
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
   };
 
   const socialAction = (action: string) => {
     setIsLoading(true);
-    // TODO: Handle NextAuth social sign in logic
+
+    signIn(action, { redirect: false })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error('Invalid credentials!');
+        } else if (callback?.ok && !callback?.error) {
+          toast.success('Signed in!');
+        }
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -62,7 +89,6 @@ export default function AuthForm() {
               register={register}
               errors={errors}
               disabled={isLoading}
-              required
             />
           )}
           <Input
@@ -73,7 +99,6 @@ export default function AuthForm() {
             register={register}
             errors={errors}
             disabled={isLoading}
-            required
           />
           <Input
             label='Password'
@@ -83,7 +108,6 @@ export default function AuthForm() {
             register={register}
             errors={errors}
             disabled={isLoading}
-            required
           />
           <div>
             <Button disabled={isLoading} fullWidth type='submit'>

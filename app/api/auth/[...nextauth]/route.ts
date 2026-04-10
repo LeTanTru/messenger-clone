@@ -12,6 +12,7 @@ export const authOptions: AuthOptions = {
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
+      issuer: process.env.GITHUB_ISSUER as string,
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_ID as string,
@@ -20,12 +21,12 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: 'email', type: 'text' },
+        password: { label: 'password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
-          throw new Error('Invalid credentials');
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Invalid Credentials');
         }
 
         const user = await prisma.user.findUnique({
@@ -34,7 +35,7 @@ export const authOptions: AuthOptions = {
           },
         });
 
-        if (!user || !user.hashedPassword) {
+        if (!user || !user?.hashedPassword) {
           throw new Error('Invalid credentials');
         }
 
@@ -58,6 +59,6 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-const handlers = NextAuth(authOptions);
+const handler = NextAuth(authOptions);
 
-export { handlers as GET, handlers as POST };
+export { handler as GET, handler as POST };
