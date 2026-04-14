@@ -52,7 +52,7 @@ export default function ConversationBox({
       <Avatar user={otherUser} />
       <div className='min-w-0 flex-1'>
         <div className='focus:outline-none'>
-          <div className='flex justify-between items-start mb-1'>
+          <div className='flex justify-between items-start'>
             <p className='text-base font-medium text-gray-900'>
               {data.name || otherUser?.name}
             </p>

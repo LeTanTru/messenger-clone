@@ -1,11 +1,14 @@
 'use client';
 
-import MessageInput from '@/app/conversations/[conversationId]/_components/message-input';
+import MessageInput from './message-input';
 import useConversation from '@/app/hooks/use-conversation';
 import axios from 'axios';
+import {
+  CldUploadButton,
+  CloudinaryUploadWidgetResults,
+} from 'next-cloudinary';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { FaTelegramPlane } from 'react-icons/fa';
-import { HiPaperAirplane, HiPhoto } from 'react-icons/hi2';
+import { HiPhoto } from 'react-icons/hi2';
 import { RiTelegram2Fill } from 'react-icons/ri';
 
 export default function Form() {
@@ -31,16 +34,32 @@ export default function Form() {
     });
   };
 
+  const handleUpload = (result: CloudinaryUploadWidgetResults) => {
+    if (typeof result?.info === 'object' && 'secure_url' in result.info) {
+      axios.post('/api/messages', {
+        image: result.info.secure_url,
+        conversationId,
+      });
+    }
+  };
+
   return (
     <div className='py-4 px-4 bg-white border-t flex items-center gap-2 lg:gap-4 w-full border-t-gray-200'>
-      <HiPhoto
-        size={30}
-        className='text-sky-500 hover:text-sky-600 transition-all ease-linear duration-200'
-      />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className='flex items-center gap-2 lg:gap-4 w-full'
       >
+        <CldUploadButton
+          options={{ maxFiles: 1 }}
+          onSuccess={handleUpload}
+          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+          className='cursor-pointer'
+        >
+          <HiPhoto
+            size={30}
+            className='text-sky-500 hover:text-sky-600 transition-all ease-linear duration-200'
+          />
+        </CldUploadButton>
         <MessageInput
           id='message'
           register={register}
