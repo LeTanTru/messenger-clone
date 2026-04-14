@@ -9,8 +9,8 @@ type AvatarProps = {
 
 export default function Avatar({ user }: AvatarProps) {
   return (
-    <div className='relative'>
-      <div className='relative inline-block rounded-full overflow-hidden size-9 md:size-11'>
+    <div className='relative flex items-center justify-center'>
+      <div className='relative inline-block rounded-full overflow-hidden size-9 md:size-11 flex items-center justify-center'>
         <Image
           src={user?.image || '/images/placeholder.jpg'}
           alt='Avatar'
