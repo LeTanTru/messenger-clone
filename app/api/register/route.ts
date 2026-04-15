@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ user });
   } catch (error) {
-    console.error('[REGISTER_ERROR] Error registering user:', error);
+    console.error('[REGISTER_ERROR]', error);
     return NextResponse.json(
       { error: 'An error occurred while registering the user' },
       { status: 500 },

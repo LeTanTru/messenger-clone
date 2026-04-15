@@ -16,6 +16,7 @@ export default function MessageBox({ data, isLast }: MessageBoxProps) {
   const session = useSession();
 
   const isOwn = data.sender.email === session.data?.user?.email;
+
   const seenList = (data.seen || [])
     .filter((user) => user.email !== data.sender.email)
     .map((user) => user.name)
@@ -65,6 +66,11 @@ export default function MessageBox({ data, isLast }: MessageBoxProps) {
             data.body
           )}
         </div>
+        {isLast && isOwn && seenList && (
+          <div className='text-xs font-light text-gray-500'>
+            Seen by {seenList}
+          </div>
+        )}
       </div>
     </div>
   );

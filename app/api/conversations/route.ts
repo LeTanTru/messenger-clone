@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     });
     return new NextResponse(JSON.stringify(newConversation), { status: 201 });
   } catch (error) {
-    console.error('Error creating conversation:', error);
+    console.error('[CONVERSATION_ERROR]', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

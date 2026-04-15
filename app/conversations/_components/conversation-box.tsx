@@ -57,7 +57,11 @@ export default function ConversationBox({
               {data.name || otherUser?.name}
             </p>
             {lastMessage?.createdAt && (
-              <p className='text-xs text-gray-400 font-light'>
+              <p
+                className={clsx('text-xs text-gray-400 font-light', {
+                  'text-gray-900 font-medium': !hasSeen,
+                })}
+              >
                 {format(new Date(lastMessage.createdAt), 'p')}
               </p>
             )}
