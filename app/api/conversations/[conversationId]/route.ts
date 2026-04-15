@@ -2,13 +2,18 @@ import getCurrentUser from '@/app/actions/get-current-user';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-export async function POST(
+export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ conversationId: string }> },
+  {
+    params,
+  }: {
+    params: Promise<{
+      conversationId: string;
+    }>;
+  },
 ) {
   try {
     const currentUser = await getCurrentUser();
-
     const { conversationId } = await params;
 
     if (!currentUser?.id || !currentUser?.email) {
@@ -24,11 +29,6 @@ export async function POST(
         id: conversationId,
       },
       include: {
-        messages: {
-          include: {
-            seen: true,
-          },
-        },
         users: true,
       },
     });
@@ -37,32 +37,18 @@ export async function POST(
       return new NextResponse('Invalid Conversation ID', { status: 400 });
     }
 
-    const lastMessage = conversation.messages[conversation.messages.length - 1];
-
-    if (!lastMessage) {
-      return NextResponse.json(conversation);
-    }
-
-    const updatedMessage = await prisma.message.update({
+    const deletedConversation = await prisma.conversation.deleteMany({
       where: {
-        id: lastMessage.id,
-      },
-      data: {
-        seen: {
-          connect: {
-            id: currentUser.id,
-          },
+        id: conversationId,
+        userIds: {
+          hasSome: [currentUser.id],
         },
-      },
-      include: {
-        sender: true,
-        seen: true,
       },
     });
 
-    return NextResponse.json(updatedMessage);
+    return NextResponse.json(deletedConversation);
   } catch (error) {
-    console.error('[CONVERSATION_SEEN_ERROR]', error);
-    return new NextResponse('Something went wrong', { status: 500 });
+    console.error('[CONVERSATION_DELETE]', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
