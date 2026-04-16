@@ -75,7 +75,7 @@ export default function MessageBox({ data, isLast }: MessageBoxProps) {
             data.body
           )}
         </div>
-        {isLast && isOwn && seenList && (
+        {isLast && isOwn && seenList.length > 0 && (
           <div
             className='text-xs font-light text-gray-500'
             title={seenList.join(', ')}

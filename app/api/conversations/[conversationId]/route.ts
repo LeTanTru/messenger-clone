@@ -1,5 +1,6 @@
 import getCurrentUser from '@/app/actions/get-current-user';
 import { prisma } from '@/lib/prisma';
+import { pusherServer } from '@/lib/pusher';
 import { NextResponse } from 'next/server';
 
 export async function DELETE(
@@ -24,7 +25,7 @@ export async function DELETE(
       return new NextResponse('Conversation ID is required', { status: 400 });
     }
 
-    const conversation = await prisma.conversation.findUnique({
+    const existingConversation = await prisma.conversation.findUnique({
       where: {
         id: conversationId,
       },
@@ -33,7 +34,7 @@ export async function DELETE(
       },
     });
 
-    if (!conversation) {
+    if (!existingConversation) {
       return new NextResponse('Invalid Conversation ID', { status: 400 });
     }
 
@@ -44,6 +45,16 @@ export async function DELETE(
           hasSome: [currentUser.id],
         },
       },
+    });
+
+    existingConversation.users.map((user) => {
+      if (user.email) {
+        pusherServer.trigger(
+          user.email,
+          'conversation:remove',
+          existingConversation,
+        );
+      }
     });
 
     return NextResponse.json(deletedConversation);

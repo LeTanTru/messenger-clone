@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { IoClose, IoTrash } from 'react-icons/io5';
 import { Fragment } from 'react/jsx-runtime';
 import AvatarGroup from '@/app/components/avatar-group';
+import useActiveList from '@/app/hooks/use-active-list';
 
 type ProfileDrawerProps = {
   data: Conversation & {
@@ -31,12 +32,17 @@ export default function ProfileDrawer({
 }: ProfileDrawerProps) {
   const otherUser = useOtherUser(data);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { members } = useActiveList();
 
   const joinedDate = format(new Date(data.createdAt), 'p PP');
 
   const title = data.name || otherUser.name;
 
-  const statusText = data.isGroup ? `${data.users.length} members` : 'Active';
+  const statusText = data.isGroup
+    ? `${data.users.length} members`
+    : members.indexOf(otherUser?.email ?? '') !== -1
+      ? 'Online'
+      : 'Offline';
 
   return (
     <>

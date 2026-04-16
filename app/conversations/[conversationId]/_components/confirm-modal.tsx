@@ -19,7 +19,6 @@ export default function ConfirmModal({ isOpen, onClose }: ConfirmModalProps) {
   const router = useRouter();
 
   const { conversationId } = useConversation();
-  console.log('🚀 ~ ConfirmModal ~ conversationId:', conversationId);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDelete = () => {
