@@ -17,7 +17,7 @@ export default async function getMessages(conversationId: string) {
 
     return messages;
   } catch (error) {
-    console.log('Error fetching messages:', error);
+    console.log('[MESSAGES_GET]', error);
     return [];
   }
 }

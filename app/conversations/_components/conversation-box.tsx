@@ -18,7 +18,9 @@ export default function ConversationBox({
   data,
   selected,
 }: ConversationBoxProps) {
-  const otherUser = useOtherUser(data);
+  const normalizedUsers = data.users ?? [];
+  const messages = data.messages ?? [];
+  const otherUser = useOtherUser({ ...data, users: normalizedUsers });
 
   const session = useSession();
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function ConversationBox({
     router.push(`/conversations/${data.id}`);
   };
 
-  const lastMessage = data.messages[data.messages.length - 1];
+  const lastMessage = messages[messages.length - 1];
 
   const userEmail = session.data?.user?.email;
 
@@ -51,7 +53,7 @@ export default function ConversationBox({
       onClick={handleClick}
     >
       {data.isGroup ? (
-        <AvatarGroup users={data.users} />
+        <AvatarGroup users={normalizedUsers} />
       ) : (
         <Avatar user={otherUser} />
       )}

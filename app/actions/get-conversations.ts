@@ -30,7 +30,7 @@ export default async function getConversations() {
     });
     return conversations;
   } catch (error) {
-    console.log('Error in getConversation: ', error);
+    console.log('[CONVERSATION_GET]', error);
     return [];
   }
 }

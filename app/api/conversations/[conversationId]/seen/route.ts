@@ -1,5 +1,6 @@
 import getCurrentUser from '@/app/actions/get-current-user';
 import { prisma } from '@/lib/prisma';
+import { pusherServer } from '@/lib/pusher';
 import { NextResponse } from 'next/server';
 
 export async function POST(
@@ -59,6 +60,22 @@ export async function POST(
         seen: true,
       },
     });
+
+    await pusherServer.trigger(
+      currentUser.email,
+      'conversation:update',
+      updatedMessage,
+    );
+
+    if (lastMessage.seenIds.indexOf(currentUser.id) !== -1) {
+      return NextResponse.json(conversation);
+    }
+
+    await pusherServer.trigger(
+      conversationId,
+      'message:update',
+      updatedMessage,
+    );
 
     return NextResponse.json(updatedMessage);
   } catch (error) {

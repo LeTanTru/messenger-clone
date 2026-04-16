@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import ToasterContext from '@/app/context/toaster-context';
 import AuthContext from '@/app/context/auth-context';
+import ActiveStatus from '@/app/components/active-status';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className='h-full flex flex-col'>
         <AuthContext>
           {children}
+          <ActiveStatus />
           <ToasterContext />
         </AuthContext>
       </body>
