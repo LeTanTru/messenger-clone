@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    if (isGroup && (!members || members.length < 2 || !name)) {
+    if (isGroup && (!members || members.length < 1 || !name)) {
       return new NextResponse('Invalid data', { status: 400 });
     }
 

@@ -81,6 +81,7 @@ export default function SettingsModal({
                 register={register}
                 required
                 disabled={isLoading}
+                placeholder='Name'
               />
               <div>
                 <label className='block text-sm font-medium leading-6 text-gray-900'>
@@ -90,8 +91,10 @@ export default function SettingsModal({
                   <Image
                     width={48}
                     height={48}
-                    className='rounded-full'
-                    src={image || currentUser?.image || '/images.png'}
+                    className='rounded-full shrink-0 aspect-square object-cover size-12'
+                    src={
+                      image || currentUser?.image || '/images/placeholder.jpg'
+                    }
                     alt={currentUser?.name || 'Avatar'}
                   />
                   <CldUploadButton
